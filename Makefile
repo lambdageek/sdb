@@ -40,6 +40,7 @@ MSBUILD ?= msbuild
 
 export MONO_PREFIX ?= /usr
 MODE ?= Debug
+TFM ?= net472
 
 ifeq ($(MODE), Debug)
 	override mono_opt = --debug
@@ -160,6 +161,7 @@ uninstall:
 	$(RM) $(PREFIX)/bin/sdb
 
 override refs = \
+	Mono.Debugger.Soft.dll \
 	Mono.Debugging.dll \
 	Mono.Debugging.Soft.dll
 
@@ -170,7 +172,6 @@ override deps = \
 	Microsoft.CodeAnalysis.dll \
 	Mono.Cecil.dll \
 	Mono.Cecil.Mdb.dll \
-	Mono.Debugger.Soft.dll \
 	System.Collections.Immutable.dll \
 	System.Reflection.Metadata.dll \
 	Newtonsoft.Json.dll \
@@ -183,31 +184,32 @@ $(addprefix bin/, $(deps)):
 		bin/ICSharpCode.NRefactory.dll
 	$(CP) dep/nrefactory/bin/$(MODE)/ICSharpCode.NRefactory.CSharp.dll \
 		bin/ICSharpCode.NRefactory.CSharp.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Microsoft.CodeAnalysis.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/Microsoft.CodeAnalysis.dll \
 		bin/Microsoft.CodeAnalysis.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Microsoft.CodeAnalysis.CSharp.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/Microsoft.CodeAnalysis.CSharp.dll \
 		bin/Microsoft.CodeAnalysis.CSharp.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Cecil.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/Mono.Cecil.dll \
 		bin/Mono.Cecil.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Cecil.Mdb.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/Mono.Cecil.Mdb.dll \
 		bin/Mono.Cecil.Mdb.dll
-	$(CP) dep/debugger-libs/Mono.Debugger.Soft/bin/$(MODE)/Mono.Debugger.Soft.dll \
+	$(CP) dep/debugger-libs/Mono.Debugger.Soft/bin/$(MODE)/$(TFM)/Mono.Debugger.Soft.dll \
 		bin/Mono.Debugger.Soft.dll
-	$(CP) dep/debugger-libs/Mono.Debugging/bin/$(MODE)/Mono.Debugging.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging/bin/$(MODE)/$(TFM)/Mono.Debugging.dll \
 		bin/Mono.Debugging.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Mono.Debugging.Soft.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/Mono.Debugging.Soft.dll \
 		bin/Mono.Debugging.Soft.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/Newtonsoft.Json.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/Newtonsoft.Json.dll \
 		bin/Newtonsoft.Json.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/System.Collections.Immutable.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/System.Collections.Immutable.dll \
 		bin/System.Collections.Immutable.dll
-	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/System.Reflection.Metadata.dll \
+	$(CP) dep/debugger-libs/Mono.Debugging.Soft/bin/$(MODE)/$(TFM)/System.Reflection.Metadata.dll \
 		bin/System.Reflection.Metadata.dll
 
 override srcs = \
 	src/Options.cs \
 	src/getline.cs \
 	src/Commands/AliasCommand.cs \
+	src/Commands/ApplyChangesCommand.cs \
 	src/Commands/ArgumentsCommand.cs \
 	src/Commands/AttachCommand.cs \
 	src/Commands/BacktraceCommand.cs \

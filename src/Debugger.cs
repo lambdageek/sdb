@@ -33,6 +33,8 @@ using System.Threading;
 using Mono.Debugging.Client;
 using Mono.Debugging.Soft;
 
+using MDB = Mono.Debugger.Soft;
+
 namespace Mono.Debugger.Client
 {
     public static class Debugger
@@ -731,5 +733,34 @@ namespace Mono.Debugger.Client
             _nextWatchId = state.NextWatchId;
             _nextBreakpointId = state.NextBreakpointId;
         }
+
+
+	internal static MDB.AssemblyMirror FindAssemblyByName (MDB.AppDomainMirror domain, string moduleName)
+	{
+	    var assms = domain.GetAssemblies();
+	    foreach (var assm in assms)
+	    {
+		if (assm.GetName().Name == moduleName)
+		    return assm;
+	    }
+	    return null;
+	}
+
+	public static void ApplyChanges (string moduleName, byte[] dmetaBytes, byte[] dilBytes, byte[] dpdbBytes)
+	{
+	    lock (_lock)
+	    {
+		if (_session != null && !_session.IsRunning && !_session.HasExited)
+		{
+		    var vm = _session.VirtualMachine;
+		    var assm = FindAssemblyByName (vm.RootDomain, moduleName);
+		    if (assm == null) {
+			Log.Error ($"no module with name {moduleName}");
+			return;
+		    }
+		    _session.ApplyChanges (assm.ManifestModule, dmetaBytes, dilBytes, dpdbBytes);
+		}
+	    }
+	}
     }
 }
